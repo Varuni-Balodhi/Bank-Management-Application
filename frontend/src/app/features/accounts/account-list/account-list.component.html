@@ -1,0 +1,52 @@
+<div class="container mt-4">
+  <h3>Accounts</h3>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Balance</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let acc of accounts">
+        <td>{{ acc.id }}</td>
+        <td>{{ acc.name }}</td>
+        <td>{{ acc.balance }}</td>
+        <td>
+          <button class="btn btn-info btn-sm"
+                  (click)="view(acc.id)">
+            View
+          </button>
+
+          <button class="btn btn-danger btn-sm ms-2"
+                  (click)="delete(acc.id)">
+            Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h2>Users</h2>
+<h2>Users</h2>
+<table border ="1" [cellPadding]="1">
+  <tr>
+    <th>ID</th>
+    <th>Username</th>
+    <th>Role</th>
+    <th>Active</th>
+  </tr>
+
+  <tr *ngFor="let user of users">
+    <td>{{ user.id }}</td>
+    <td>{{ user.username }}</td>
+    <td>{{ user.role }}</td>
+    <td>{{ user.active }}</td>
+  </tr>
+</table>
+
+</div>

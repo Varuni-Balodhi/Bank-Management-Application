@@ -1,0 +1,94 @@
+/* ===== GLOBAL RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background: #f4f6f9;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+  background: #1e293b;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+
+.navbar h2 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.navbar button {
+  background: #ef4444;
+  border: none;
+  padding: 8px 14px;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.navbar button:hover {
+  background: #dc2626;
+}
+
+/* ===== DASHBOARD WRAPPER ===== */
+.dashboard-container {
+  padding: 40px;
+}
+
+/* ===== DASHBOARD HEADER ===== */
+.dashboard-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 30px;
+  color: #1e293b;
+}
+
+/* ===== CARDS GRID ===== */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+/* ===== CARD ===== */
+.dashboard-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  transition: 0.2s;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+}
+
+.card-title {
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 10px;
+}
+
+.card-value {
+  font-size: 30px;
+  font-weight: bold;
+  color: #0f172a;
+}
+
+/* ===== CHART BOX ===== */
+.chart-box {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}

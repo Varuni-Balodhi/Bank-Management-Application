@@ -1,0 +1,18 @@
+<nav class="navbar navbar-dark bg-dark navbar-expand">
+  <div class="container-fluid">
+    <a class="navbar-brand">BankApp</a>
+
+    <div>
+      <a routerLink="/accounts" class="btn btn-outline-light btn-sm me-2">Accounts</a>
+      <a routerLink="/accounts/create" class="btn btn-outline-light btn-sm me-2">Create</a>
+      <a routerLink="/deposit" class="btn btn-outline-light btn-sm me-2">Deposit</a>
+      <a routerLink="/withdraw" class="btn btn-outline-light btn-sm me-2">Withdraw</a>
+      <a routerLink="/transfer" class="btn btn-outline-light btn-sm me-2">Transfer</a>
+      <button class="btn btn-danger btn-sm" (click)="logout()">Logout</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <router-outlet></router-outlet>
+</div>

@@ -1,0 +1,5 @@
+package com.ymsli.bank.account.dto;
+
+public class CreateUserRequest {
+
+}

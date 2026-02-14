@@ -1,0 +1,118 @@
+package com.ymsli.bank.transaction;
+
+import com.ymsli.bank.account.Account;
+import com.ymsli.bank.account.AccountService;
+import com.ymsli.bank.exception.BusinessException;
+import com.ymsli.bank.user.User;
+import com.ymsli.bank.user.UserRepository;
+import com.ymsli.bank.util.SecurityUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+
+@Service
+@Transactional
+public class TransactionService {
+
+    private static final BigDecimal APPROVAL_LIMIT =
+            new BigDecimal("200000");
+
+    private final TransactionRepository transactionRepository;
+    private final AccountService accountService;
+    private final UserRepository userRepository;
+
+    public TransactionService(TransactionRepository transactionRepository,
+                              AccountService accountService,
+                              UserRepository userRepository) {
+        this.transactionRepository = transactionRepository;
+        this.accountService = accountService;
+        this.userRepository = userRepository;
+    }
+
+    public void deposit(String accountNumber, BigDecimal amount) {
+
+        validateAmount(amount);
+
+        Account account =
+                accountService.getByAccountNumber(accountNumber);
+
+        User clerk = getCurrentClerk();
+
+        accountService.credit(account, amount);
+
+        Transaction transaction = new Transaction(
+                account,
+                TransactionType.DEPOSIT,
+                amount,
+                TransactionStatus.COMPLETED,
+                clerk
+        );
+
+        transactionRepository.save(transaction);
+    }
+
+    public void withdraw(String accountNumber, BigDecimal amount) {
+
+        validateAmount(amount);
+
+        Account account =
+                accountService.getByAccountNumber(accountNumber);
+
+        User clerk = getCurrentClerk();
+
+        if (account.getBalance().compareTo(amount) < 0) {
+            throw new BusinessException("Insufficient balance");
+        }
+
+        Transaction transaction;
+
+        if (amount.compareTo(APPROVAL_LIMIT) <= 0) {
+
+            accountService.debit(account, amount);
+
+            transaction = new Transaction(
+                    account,
+                    TransactionType.WITHDRAWAL,
+                    amount,
+                    TransactionStatus.COMPLETED,
+                    clerk
+            );
+
+        } else {
+            transaction = new Transaction(
+                    account,
+                    TransactionType.WITHDRAWAL,
+                    amount,
+                    TransactionStatus.PENDING_APPROVAL,
+                    clerk
+            );
+        }
+
+        transactionRepository.save(transaction);
+    }
+
+    private User getCurrentClerk() {
+        String username = SecurityUtils.getCurrentUsername()
+                .orElseThrow(() ->
+                        new IllegalStateException("Unauthenticated access")
+                );
+
+        User clerk = userRepository.findByUsername(username)
+                .orElseThrow(() ->
+                        new IllegalStateException("User not found: " + username)
+                );
+
+        if (!clerk.getRole().name().equals("CLERK")) {
+            throw new SecurityException("Only CLERK can perform transactions");
+        }
+
+        return clerk;
+    }
+
+    private void validateAmount(BigDecimal amount) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException("Amount must be greater than zero");
+        }
+    }
+}

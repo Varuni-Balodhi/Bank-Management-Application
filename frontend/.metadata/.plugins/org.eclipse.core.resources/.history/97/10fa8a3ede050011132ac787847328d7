@@ -1,0 +1,55 @@
+package com.ymsli.bank.audit;
+
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import com.ymsli.bank.transaction.Transaction;
+import com.ymsli.bank.transaction.TransactionRepository;
+
+import jakarta.transaction.Transactional;
+
+@Service
+@Transactional(readOnly = true)
+public class AuditService {
+
+    private final TransactionRepository transactionRepository;
+
+    public AuditService(TransactionRepository transactionRepository) {
+        this.transactionRepository = transactionRepository;
+    }
+
+    /**
+     * Manager: paginated audit (NO fetch join – pagination safe).
+     */
+    public Page<Transaction> getAllTransactions(Pageable pageable) {
+        return transactionRepository.findAll(pageable);
+    }
+
+    /**
+     * Manager: audit by account number (pagination safe).
+     */
+    public Page<Transaction> getTransactionsByAccountNumber(
+            String accountNumber,
+            Pageable pageable) {
+
+        return transactionRepository
+                .findByAccount_AccountNumber(accountNumber, pageable);
+    }
+
+    /**
+     * Manager: view pending approvals (fetch joins OK).
+     */
+    public List<Transaction> getPendingApprovals() {
+        return transactionRepository.findPendingApprovalsWithDetails();
+    }
+
+    /**
+     * Manager: full audit (NO pagination, fetch joins OK).
+     */
+    public List<Transaction> getFullAudit() {
+        return transactionRepository.findAllWithDetails();
+    }
+}

@@ -1,0 +1,54 @@
+import java.awt.print.Pageable;
+import java.util.List;
+
+import org.hibernate.query.Page;
+import org.springframework.stereotype.Service;
+
+import com.ymsli.bank.transaction.Transaction;
+import com.ymsli.bank.transaction.TransactionRepository;
+
+import jakarta.transaction.Transactional;
+
+@Service
+@Transactional(readOnly = true)
+public class AuditService {
+
+    private final TransactionRepository transactionRepository;
+
+    public AuditService(TransactionRepository transactionRepository) {
+        this.transactionRepository = transactionRepository;
+    }
+
+    /**
+     * Manager: paginated audit (no fetch join).
+     */
+    public Page<Transaction> getAllTransactions(Pageable pageable) {
+        return transactionRepository.findAll(pageable);
+    }
+
+    /**
+     * Manager: audit by account.
+     */
+    public Page<Transaction> getTransactionsByAccountNumber(
+            String accountNumber,
+            Pageable pageable) {
+
+        return transactionRepository
+                .findByAccount_AccountNumber(accountNumber, pageable);
+    }
+
+    /**
+     * Manager: view pending approvals.
+     */
+    public List<Transaction> getPendingApprovals() {
+        return transactionRepository
+                .findPendingApprovalsWithDetails();
+    }
+
+    /**
+     * Manager: full audit (no pagination, fetch joins OK).
+     */
+    public List<Transaction> getFullAudit() {
+        return transactionRepository.findAllWithDetails();
+    }
+}

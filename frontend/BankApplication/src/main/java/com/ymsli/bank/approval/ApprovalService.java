@@ -1,0 +1,122 @@
+package com.ymsli.bank.approval;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.ymsli.bank.account.Account;
+import com.ymsli.bank.account.AccountService;
+import com.ymsli.bank.exception.ResourceNotFoundException;
+import com.ymsli.bank.transaction.Transaction;
+import com.ymsli.bank.transaction.TransactionRepository;
+import com.ymsli.bank.transaction.TransactionStatus;
+import com.ymsli.bank.user.User;
+import com.ymsli.bank.user.UserRepository;
+import com.ymsli.bank.util.SecurityUtils;
+
+import jakarta.transaction.Transactional;
+
+@Service
+@Transactional
+public class ApprovalService {
+
+    private final TransactionRepository transactionRepository;
+    private final AccountService accountService;
+    private final UserRepository userRepository;
+
+    public ApprovalService(TransactionRepository transactionRepository,
+                           AccountService accountService,
+                           UserRepository userRepository) {
+        this.transactionRepository = transactionRepository;
+        this.accountService = accountService;
+        this.userRepository = userRepository;
+    }
+
+    /* ---------- Approve ---------- */
+
+    public void approve(Long transactionId) {
+
+        Transaction transaction = getPendingTransaction(transactionId);
+        User manager = getCurrentManager();
+
+        // Debit balance ONLY after approval
+        Account account = transaction.getAccount();
+        accountService.debit(account, transaction.getAmount());
+
+        transaction.markApproved(manager);
+
+        transactionRepository.save(transaction);
+    }
+
+    /* ---------- Reject ---------- */
+
+    public void reject(Long transactionId) {
+
+        Transaction transaction = getPendingTransaction(transactionId);
+        User manager = getCurrentManager();
+
+        transaction.markRejected(manager);
+
+        transactionRepository.save(transaction);
+    }
+
+    /* ---------- Pending approvals (Manager view) ---------- */
+
+    public List<PendingApprovalResponse> getPendingApprovals() {
+
+        return transactionRepository
+                .findPendingApprovalsWithDetails()
+                .stream()
+                .map(t -> new PendingApprovalResponse(
+                        t.getId(),
+                        t.getAccount().getAccountNumber(),
+                        t.getAmount(),
+                        t.getPerformedBy().getUsername(),
+                        t.getCreatedAt()
+                ))
+                .toList();
+    }
+
+    /* ---------- Helpers ---------- */
+
+    private Transaction getPendingTransaction(Long transactionId) {
+
+        Transaction transaction = transactionRepository.findById(transactionId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Transaction not found: " + transactionId
+                        )
+                );
+
+        if (transaction.getStatus() != TransactionStatus.PENDING_APPROVAL) {
+            throw new IllegalStateException(
+                    "Transaction is not pending approval"
+            );
+        }
+
+        return transaction;
+    }
+
+    private User getCurrentManager() {
+
+        String username = SecurityUtils.getCurrentUsername()
+                .orElseThrow(() ->
+                        new IllegalStateException("Unauthenticated access")
+                );
+
+        User manager = userRepository.findByUsername(username)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Manager not found: " + username
+                        )
+                );
+
+        if (manager.getRole() != com.ymsli.bank.user.Role.MANAGER) {
+            throw new SecurityException(
+                    "Only MANAGER can approve or reject transactions"
+            );
+        }
+
+        return manager;
+    }
+}

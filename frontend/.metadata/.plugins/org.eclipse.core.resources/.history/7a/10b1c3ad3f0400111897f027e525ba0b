@@ -1,0 +1,45 @@
+package com.ymsli.bank.transaction;
+
+import com.ymsli.bank.account.Account;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+public interface TransactionRepository
+extends JpaRepository<Transaction, Long> {
+
+/**
+* Paginated transaction history by account number.
+* NO fetch join → pagination safe.
+*/
+Page<Transaction> findByAccount_AccountNumber(
+    String accountNumber,
+    Pageable pageable
+);
+
+/**
+* Pending approvals for manager.
+* Fetch join is SAFE because this returns a List.
+*/
+@Query("""
+select t from Transaction t
+join fetch t.account
+join fetch t.performedBy
+where t.status = :status
+""")
+List<Transaction> findByStatus(
+    @Param("status") TransactionStatus status
+);
+
+/**
+* Single transaction with full graph (when needed).
+*/
+@EntityGraph(attributePaths = {
+    "account",
+    "performedBy",
+    "approvedBy"
+})
+@Query("select t from Transaction t where t.id = :id")
+Transaction findDetailedById(@Param("id") Long id);
+}

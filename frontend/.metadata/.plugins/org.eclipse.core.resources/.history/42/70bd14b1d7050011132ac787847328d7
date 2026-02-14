@@ -1,0 +1,5 @@
+package com.ymsli.bank.approval;
+
+public class PendingApprovalResponse {
+
+}

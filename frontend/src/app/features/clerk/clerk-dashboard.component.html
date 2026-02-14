@@ -1,0 +1,81 @@
+<div class="dashboard-container">
+
+  <!-- Title -->
+  <h2 class="dashboard-title">Clerk Dashboard</h2>
+
+  <!-- ===== CARDS SECTION ===== -->
+  <div class="cards-grid">
+
+    <!-- Today Transactions -->
+    <div class="dashboard-card clickable" (click)="goToTransfer()">
+      <div class="card-title">Today's Transactions</div>
+      <div class="card-value">{{ todayTransactions }}</div>
+      <div class="card-footer">View Transfers →</div>
+    </div>
+
+    <!-- Deposits -->
+    <div class="dashboard-card clickable" (click)="goToDeposit()">
+      <div class="card-title">Deposits</div>
+      <div class="card-value">{{ deposits }}</div>
+      <div class="card-footer">Make Deposit →</div>
+    </div>
+
+    <!-- Withdrawals -->
+    <div class="dashboard-card clickable" (click)="goToWithdraw()">
+      <div class="card-title">Withdrawals</div>
+      <div class="card-value">{{ withdrawals }}</div>
+      <div class="card-footer">Withdraw Funds →</div>
+    </div>
+
+  </div>
+
+
+  <!-- ===== CHART SECTION ===== -->
+  <div class="chart-box">
+    <h4 class="section-title">Daily Summary</h4>
+
+    <canvas
+      baseChart
+      [data]="{
+        labels: chartLabels,
+        datasets: [
+          { data: chartData, label: 'Daily Summary' }
+        ]
+      }"
+      [type]="'bar'">
+    </canvas>
+  </div>
+
+
+  <!-- ===== RECENT TRANSFERS SECTION ===== -->
+  <div class="recent-section">
+    <h4 class="section-title">Recent Transfers</h4>
+
+    <div *ngIf="transfers.length === 0" class="no-data">
+      No transfers found
+    </div>
+
+    <div *ngIf="transfers.length > 0" class="table-wrapper">
+      <table class="transfer-table">
+        <thead>
+          <tr>
+            <th>From Account</th>
+            <th>To Account</th>
+            <th>Amount</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let t of transfers">
+            <td>{{ t.fromAccountId }}</td>
+            <td>{{ t.toAccountId }}</td>
+            <td>₹ {{ t.amount }}</td>
+            <td>{{ t.createdAt | date:'medium' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

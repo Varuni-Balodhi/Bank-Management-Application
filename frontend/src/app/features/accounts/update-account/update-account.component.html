@@ -1,0 +1,63 @@
+<div class="col-md-6 offset-md-3 mt-4">
+  <h3>Update Account</h3>
+
+  <p class="text-danger">
+    Name and Balance cannot be updated.
+  </p>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <form (ngSubmit)="onSubmit()">
+
+    <!-- READ ONLY NAME -->
+    <div class="form-group mb-3">
+      <label>Name</label>
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="account.name"
+        name="name"
+        readonly>
+    </div>
+
+    <!-- READ ONLY BALANCE -->
+    <div class="form-group mb-3">
+      <label>Balance</label>
+      <input
+        type="number"
+        class="form-control"
+        [(ngModel)]="account.balance"
+        name="balance"
+        readonly>
+    </div>
+
+    <!-- EDITABLE EMAIL -->
+    <div class="form-group mb-3">
+      <label>Email</label>
+      <input
+        type="email"
+        class="form-control"
+        [(ngModel)]="account.email"
+        name="email"
+        required>
+    </div>
+
+    <!-- EDITABLE PHONE -->
+    <div class="form-group mb-3">
+      <label>Phone</label>
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="account.phone"
+        name="phone"
+        required>
+    </div>
+
+    <button type="submit" class="btn btn-success">
+      Update
+    </button>
+
+  </form>
+</div>

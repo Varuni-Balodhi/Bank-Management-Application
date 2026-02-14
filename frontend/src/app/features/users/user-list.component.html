@@ -1,0 +1,53 @@
+<div class="user-container">
+
+  <h2 class="page-title">User Management</h2>
+  <h3>The Users are as Follows</h3>
+  <div class="table-wrapper">
+    <table class="user-table">
+
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Created At</th>
+        </tr>
+      </thead>
+
+      <tbody *ngIf="users && users.length > 0; else noData">
+
+  <tr *ngFor="let user of users">
+    <td>{{ user.id }}</td>
+    <td>{{ user.username }}</td>
+    <td>
+      <span class="role-badge" [ngClass]="user.role">
+        {{ user.role }}
+      </span>
+    </td>
+    <td>
+      <span 
+        class="status-badge"
+        [ngClass]="user.active ? 'active' : 'inactive'">
+        {{ user.active ? 'Active' : 'Inactive' }}
+      </span>
+    </td>
+    <td>{{ user.createdAt | date:'medium' }}</td>
+  </tr>
+
+</tbody>
+
+<ng-template #noData>
+  <tbody>
+    <tr>
+      <td colspan="5" class="no-data">
+        No users found
+      </td>
+    </tr>
+  </tbody>
+</ng-template>
+
+    </table>
+  </div>
+
+</div>

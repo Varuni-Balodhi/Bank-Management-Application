@@ -1,0 +1,41 @@
+<div class="form-container">
+
+  <div class="form-card">
+    <h2 class="form-title">Withdraw Funds</h2>
+
+    <form (ngSubmit)="withdraw()">
+
+      <div class="form-group">
+        <label>Account ID</label>
+        <input
+          type="number"
+          [(ngModel)]="accountId"
+          name="accountId"
+          required />
+      </div>
+
+      <div class="form-group">
+        <label>Amount</label>
+        <input
+          type="number"
+          [(ngModel)]="amount"
+          name="amount"
+          required />
+      </div>
+
+      <button type="submit" class="danger-btn" [disabled]="loading">
+        {{ loading ? 'Processing...' : 'Withdraw' }}
+      </button>
+
+      <div class="success-msg" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+
+      <div class="error-msg" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+    </form>
+  </div>
+
+</div>

@@ -1,0 +1,64 @@
+<div class="transfer-container">
+
+  <div class="transfer-card">
+
+    <h2 class="page-title">Fund Transfer</h2>
+    <p class="subtitle">Transfer funds securely between accounts</p>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert error">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Transfer Form -->
+    <form (ngSubmit)="onSubmit()" #transferForm="ngForm">
+
+      <div class="input-group">
+        <label>From Account ID</label>
+        <input
+          type="number"
+          [(ngModel)]="fromAccountId"
+          name="fromAccountId"
+          required
+          min="1"
+          placeholder="Enter sender account ID"
+        />
+      </div>
+
+      <div class="input-group">
+        <label>To Account ID</label>
+        <input
+          type="number"
+          [(ngModel)]="toAccountId"
+          name="toAccountId"
+          required
+          min="1"
+          placeholder="Enter receiver account ID"
+        />
+      </div>
+
+      <div class="input-group">
+        <label>Amount</label>
+        <input
+          type="number"
+          [(ngModel)]="amount"
+          name="amount"
+          required
+          min="1"
+          placeholder="Enter transfer amount"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="transfer-btn"
+        [disabled]="transferForm.invalid"
+      >
+        Transfer Funds
+      </button>
+
+    </form>
+
+  </div>
+
+</div>

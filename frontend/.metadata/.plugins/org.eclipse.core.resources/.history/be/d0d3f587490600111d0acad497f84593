@@ -1,0 +1,50 @@
+package com.ymsli.bank.approval;
+
+import java.util.List;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/approvals")
+public class ApprovalController {
+
+    private final ApprovalService approvalService;
+
+    public ApprovalController(ApprovalService approvalService) {
+        this.approvalService = approvalService;
+    }
+
+    /**
+     * Approve a high-value withdrawal transaction.
+     */
+    @PreAuthorize("hasRole('MANAGER')")
+    @PutMapping("/{transactionId}/approve")
+    public String approveWithdrawal(@PathVariable Long transactionId) {
+        approvalService.approve(transactionId);
+        return "Withdrawal approved successfully";
+    }
+
+    /**
+     * Reject a high-value withdrawal transaction.
+     */
+    @PreAuthorize("hasRole('MANAGER')")
+    @PutMapping("/{transactionId}/reject")
+    public String rejectWithdrawal(@PathVariable Long transactionId) {
+        approvalService.reject(transactionId);
+        return "Withdrawal rejected successfully";
+    }
+
+    /**
+     * View pending approvals.
+     */
+    @PreAuthorize("hasRole('MANAGER')")
+    @GetMapping("/pending")
+    public List<PendingApprovalResponse> pendingApprovals() {
+        return approvalService.getPendingApprovals();
+    }
+}

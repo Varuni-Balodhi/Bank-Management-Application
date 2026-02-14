@@ -1,0 +1,29 @@
+package com.ymsli.bank.bootstrap;
+
+import com.ymsli.bank.user.UserService;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+@Component
+public class DataInitializer implements CommandLineRunner {
+
+    private final UserService userService;
+
+    public DataInitializer(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Override
+    public void run(String... args) {
+
+        try {
+            userService.createManager("manager1", "manager123");
+            System.out.println("Manager created");
+        } catch (Exception ignored) {}
+
+        try {
+            userService.createClerk("clerk1", "clerk123");
+            System.out.println("Clerk created");
+        } catch (Exception ignored) {}
+    }
+}

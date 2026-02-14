@@ -1,0 +1,5 @@
+package com.ymsli.bank.bootstrap;
+
+public class DataInitializer {
+
+}

@@ -1,0 +1,40 @@
+package com.ymsli.bank.transaction;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.*;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+
+public interface TransactionRepository
+        extends JpaRepository<Transaction, Long> {
+
+    /**
+     * Fetch transactions by account number
+     * (lazy-safe using fetch join)
+     */
+    @Query("""
+        select t from Transaction t
+        join fetch t.account a
+        join fetch t.performedBy u
+        where a.accountNumber = :accountNumber
+        """)
+    Page<Transaction> findByAccountNumber(
+            @Param("accountNumber") String accountNumber,
+            Pageable pageable
+    );
+
+    /**
+     * Fetch pending approvals (manager view)
+     */
+    @Query("""
+        select t from Transaction t
+        join fetch t.account
+        join fetch t.performedBy
+        where t.status = :status
+        """)
+    List<Transaction> findByStatus(
+            @Param("status") TransactionStatus status
+    );
+}
