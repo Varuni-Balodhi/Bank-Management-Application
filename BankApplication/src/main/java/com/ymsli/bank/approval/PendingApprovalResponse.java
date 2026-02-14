@@ -1,0 +1,33 @@
+package com.ymsli.bank.approval;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+public class PendingApprovalResponse {
+
+    private Long transactionId;
+    private String accountNumber;
+    private BigDecimal amount;
+    private String clerkUsername;
+    private LocalDateTime createdAt;
+
+    public PendingApprovalResponse(
+            Long transactionId,
+            String accountNumber,
+            BigDecimal amount,
+            String clerkUsername,
+            LocalDateTime createdAt
+    ) {
+        this.transactionId = transactionId;
+        this.accountNumber = accountNumber;
+        this.amount = amount;
+        this.clerkUsername = clerkUsername;
+        this.createdAt = createdAt;
+    }
+
+    public Long getTransactionId() { return transactionId; }
+    public String getAccountNumber() { return accountNumber; }
+    public BigDecimal getAmount() { return amount; }
+    public String getClerkUsername() { return clerkUsername; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+}

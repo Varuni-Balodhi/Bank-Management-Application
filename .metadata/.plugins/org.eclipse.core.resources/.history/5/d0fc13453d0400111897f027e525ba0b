@@ -1,0 +1,70 @@
+package com.ymsli.bank.transaction;
+
+import com.ymsli.bank.account.Account;
+import com.ymsli.bank.user.User;
+
+import jakarta.persistence.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "transactions")
+public class Transaction {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "account_id", nullable = false)
+    private Account account;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TransactionType type;
+
+    @Column(nullable = false, precision = 19, scale = 2)
+    private BigDecimal amount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TransactionStatus status;
+
+    // ✅ FIXED
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "performed_by", nullable = false, updatable = false)
+    private User performedBy;
+
+    // ✅ BETTER DESIGN
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "approved_by")
+    private Long approvedBy;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    protected Transaction() {}
+
+    public Transaction(Account account,
+                       TransactionType type,
+                       BigDecimal amount,
+                       TransactionStatus status,
+                       User clerk) {
+        this.account = account;
+        this.type = type;
+        this.amount = amount;
+        this.status = status;
+        this.performedBy = clerk;
+    }
+
+    public void markApproved(User manager) {
+        this.status = TransactionStatus.COMPLETED;
+        this.approvedBy = manager;
+    }
+
+    public void markRejected(Long long1) {
+        this.status = TransactionStatus.REJECTED;
+        this.approvedBy = long1;
+    }
+}

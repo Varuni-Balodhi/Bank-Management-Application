@@ -1,0 +1,45 @@
+package com.ymsli.bank.approval;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/approvals")
+public class ApprovalController {
+
+    private final ApprovalService approvalService;
+
+    public ApprovalController(ApprovalService approvalService) {
+        this.approvalService = approvalService;
+    }
+
+    /**
+     * Approve a high-value withdrawal transaction.
+     * Accessible only by MANAGER.
+     */
+    @PreAuthorize("hasRole('MANAGER')")
+    @PutMapping("/{transactionId}/approve")
+    public String approveWithdrawal(@PathVariable Long transactionId,
+                                    @RequestParam Long managerId) {
+
+        approvalService.approve(transactionId);
+        return "Withdrawal approved successfully";
+    }
+
+    /**
+     * Reject a high-value withdrawal transaction.
+     * Accessible only by MANAGER.
+     */
+    @PreAuthorize("hasRole('MANAGER')")
+    @PutMapping("/{transactionId}/reject")
+    public String rejectWithdrawal(@PathVariable Long transactionId,
+                                   @RequestParam Long managerId) {
+
+        approvalService.reject(transactionId);
+        return "Withdrawal rejected successfully";
+    }
+}

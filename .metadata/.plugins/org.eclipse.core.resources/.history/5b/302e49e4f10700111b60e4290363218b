@@ -1,0 +1,5 @@
+package com.ymsli.bank.user.dto;
+
+public class UserResponse {
+
+}

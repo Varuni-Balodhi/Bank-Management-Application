@@ -1,0 +1,18 @@
+package com.ymsli.bank.user.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public class CreateUserRequest {
+
+    @NotBlank
+    private String username;
+
+    @NotBlank
+    private String password;
+
+    @NotNull
+    private String role;  // CLERK or MANAGER
+
+    // getters & setters
+}

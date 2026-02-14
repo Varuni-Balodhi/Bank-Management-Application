@@ -1,0 +1,9 @@
+package com.ymsli.bank.user.dto;
+
+public class UpdateUserRequest {
+
+    private String password;
+    private Boolean active;
+
+    // getters & setters
+}

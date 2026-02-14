@@ -1,0 +1,29 @@
+package com.ymsli.bank.transaction;
+
+import com.ymsli.bank.account.Account;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+public interface TransactionRepository
+        extends JpaRepository<Transaction, Long> {
+
+    /**
+     * Fetch transaction history for an account with joins
+     * to avoid N+1 problem.
+     */
+    @Query("""
+        SELECT t
+        FROM Transaction t
+        JOIN FETCH t.account
+        JOIN FETCH t.performedBy
+        LEFT JOIN FETCH t.approvedBy
+        WHERE t.account = :account
+        ORDER BY t.createdAt DESC
+    """)
+    Page<Transaction> findHistoryByAccount(
+            Account account,
+            Pageable pageable
+    );
+}

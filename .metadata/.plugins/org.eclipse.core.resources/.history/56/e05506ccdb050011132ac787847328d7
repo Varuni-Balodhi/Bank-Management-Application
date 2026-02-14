@@ -1,0 +1,55 @@
+package com.ymsli.bank.audit;
+
+import com.ymsli.bank.transaction.Transaction;
+import com.ymsli.bank.transaction.TransactionRepository;
+import com.ymsli.bank.transaction.TransactionStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@Transactional(readOnly = true)
+public class AuditService {
+
+    private final TransactionRepository transactionRepository;
+
+    public AuditService(TransactionRepository transactionRepository) {
+        this.transactionRepository = transactionRepository;
+    }
+
+    /**
+     * Fetch complete transaction history (Manager only).
+     */
+    public Page<Transaction> getAllTransactions(Pageable pageable) {
+        return transactionRepository.findAll(pageable);
+    }
+
+    /**
+     * Fetch transaction history for a specific account.
+     */
+    public Page<Transaction> getTransactionsByAccountNumber(
+            String accountNumber,
+            Pageable pageable) {
+    	return transactionRepository
+    	        .findByAccount_AccountNumber(accountNumber, pageable);
+
+    }
+    /**
+     * Fetch pending approval transactions.
+     */
+    public List<Transaction> getPendingApprovals() {
+        return transactionRepository
+                .findByStatus(TransactionStatus.PENDING_APPROVAL);
+    }
+    @Query("""
+    		select t from Transaction t
+    		join fetch t.account
+    		join fetch t.performedBy
+    		left join fetch t.approvedBy
+    		""")
+    		Page<Transaction> findAllWithDetails(Pageable pageable);
+
+}
